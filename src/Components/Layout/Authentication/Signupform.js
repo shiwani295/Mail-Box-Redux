@@ -110,7 +110,6 @@ const Signupform = () => {
                 <div className="form-outline mb-4">
                   <input
                     type="password"
-                    id="form2Example22"
                     className="form-control"
                     placeholder="Password.."
                     ref={InputpasswordRef}
@@ -121,7 +120,6 @@ const Signupform = () => {
                   <div className="form-outline mb-4">
                     <input
                       type="password"
-                      id="form2Example22"
                       className="form-control"
                       placeholder="Confirm Password.."
                       ref={inputCpasswordRef}
@@ -138,7 +136,7 @@ const Signupform = () => {
                     {login ? " Log in" : "SignUp"}
                   </button>
                   {login ? (
-                    <Link className="text-white " href="#!">
+                    <Link className="text-white " to="/forgotpassword">
                       Forgot password?
                     </Link>
                   ) : (
