@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Signupform = () => {
   const InputemailRef = useRef();
   const InputpasswordRef = useRef();
+  const inputCpasswordRef = useRef();
   const history = useNavigate();
   const dispatch = useDispatch();
   const islogin = useSelector((state) => state.Auth.isAuth);
@@ -18,43 +19,60 @@ const Signupform = () => {
     const password = InputpasswordRef.current.value;
     dispatch(AuthAction.Signup(email, password));
 
-    let url;
-    if (login) {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDNbzzh6L43Dqjd4u9TIrRhkfHIXJ9dPDk";
+    let cpassword;
+    if (!login) {
+      cpassword = inputCpasswordRef.current.value;
     } else {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDNbzzh6L43Dqjd4u9TIrRhkfHIXJ9dPDk";
+      cpassword = InputpasswordRef.current.value;
     }
 
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        returnSecureToken: true,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error("Something Went Wrong");
-        }
-      })
-      .then((data) => {
-        localStorage.setItem("token", data.idToken);
-        localStorage.setItem("email", data.email);
+    if (password === cpassword) {
+      let url;
+      if (login) {
+        url =
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDNbzzh6L43Dqjd4u9TIrRhkfHIXJ9dPDk";
+      } else {
+        url =
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDNbzzh6L43Dqjd4u9TIrRhkfHIXJ9dPDk";
+      }
 
-        dispatch(AuthAction.Login());
-        history("/dashboard");
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          returnSecureToken: true,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .catch((err) => {
-        alert(err.message);
-      });
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error("Something Went Wrong");
+          }
+        })
+        .then((data) => {
+          localStorage.setItem("token", data.idToken);
+          localStorage.setItem("email", data.email);
+
+          dispatch(AuthAction.Login());
+          history("/dashboard");
+        })
+        .catch((err) => {
+          alert(err.message);
+        });
+
+      InputemailRef.current.value = "";
+      InputpasswordRef.current.value = "";
+      if (!login) {
+        inputCpasswordRef.current.value = "";
+      }
+    } else {
+      alert("Passwords do not match");
+    }
 
     //
   };
@@ -99,6 +117,18 @@ const Signupform = () => {
                     required
                   />
                 </div>
+                {!login && (
+                  <div className="form-outline mb-4">
+                    <input
+                      type="password"
+                      id="form2Example22"
+                      className="form-control"
+                      placeholder="Confirm Password.."
+                      ref={inputCpasswordRef}
+                      required
+                    />
+                  </div>
+                )}
 
                 <div className="text-center pt-1 mb-5 pb-1">
                   <button
