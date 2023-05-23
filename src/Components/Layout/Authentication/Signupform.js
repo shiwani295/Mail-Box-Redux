@@ -1,8 +1,64 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import logo from "../../Asset/Image/logo.png";
 import "../Authentication/Signuppage.css";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthAction } from "../../Store/AuthSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signupform = () => {
+  const InputemailRef = useRef();
+  const InputpasswordRef = useRef();
+  const history = useNavigate();
+  const dispatch = useDispatch();
+  const islogin = useSelector((state) => state.Auth.isAuth);
+  const [login, setIslogin] = useState(islogin);
+  const FormSubmitHandlar = (e) => {
+    e.preventDefault();
+    const email = InputemailRef.current.value;
+    const password = InputpasswordRef.current.value;
+    dispatch(AuthAction.Signup(email, password));
+
+    let url;
+    if (login) {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDNbzzh6L43Dqjd4u9TIrRhkfHIXJ9dPDk";
+    } else {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDNbzzh6L43Dqjd4u9TIrRhkfHIXJ9dPDk";
+    }
+
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        returnSecureToken: true,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Something Went Wrong");
+        }
+      })
+      .then((data) => {
+        localStorage.setItem("token", data.idToken);
+        localStorage.setItem("email", data.email);
+
+        dispatch(AuthAction.Login());
+        history("/dashboard");
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+
+    //
+  };
+
   return (
     <section>
       <div className="container ">
@@ -15,8 +71,12 @@ const Signupform = () => {
             />
             <h3>We Are The Mail Box Team</h3>
             <div className="Fromstart">
-              <form>
-                <p>Please login to your account</p>
+              <form onSubmit={FormSubmitHandlar}>
+                {login ? (
+                  <p>Please Login To Your Account</p>
+                ) : (
+                  <p>Please Create Your Account</p>
+                )}
 
                 <div className="form-outline mb-4">
                   <input
@@ -24,6 +84,8 @@ const Signupform = () => {
                     id="form2Example11"
                     className="form-control"
                     placeholder="Email address.."
+                    ref={InputemailRef}
+                    required
                   />
                 </div>
 
@@ -33,25 +95,47 @@ const Signupform = () => {
                     id="form2Example22"
                     className="form-control"
                     placeholder="Password.."
+                    ref={InputpasswordRef}
+                    required
                   />
                 </div>
 
                 <div className="text-center pt-1 mb-5 pb-1">
                   <button
                     className="btn btn-dark border-white btn-block mb-3"
-                    type="button"
+                    type="submit"
                   >
-                    Log in
+                    {login ? " Log in" : "SignUp"}
                   </button>
-                  <a class="text-white " href="#!">
-                    Forgot password?
-                  </a>
+                  {login ? (
+                    <Link className="text-white " href="#!">
+                      Forgot password?
+                    </Link>
+                  ) : (
+                    ""
+                  )}
                 </div>
-                <div class="d-flex align-items-center justify-content-center pb-4">
-                  <p class="mb-0 me-2">Don't have an account?</p>
-                  <button type="button" class="btn btn-outline-white ml-3">
-                    Create new
-                  </button>
+                <div className="d-flex align-items-center justify-content-center pb-4">
+                  <p className="mb-0 me-2">
+                    {islogin ? "Don't have an account?" : " If have an account"}
+                  </p>
+                  {login ? (
+                    <Link
+                      // type="button"
+                      className="btn border border-white text-white ml-3"
+                      onClick={() => setIslogin(false)}
+                    >
+                      Create new
+                    </Link>
+                  ) : (
+                    <Link
+                      // type="button"
+                      className="btn btn-outline-white ml-3 border border-white text-white"
+                      onClick={() => setIslogin(true)}
+                    >
+                      Login
+                    </Link>
+                  )}
                 </div>
               </form>
             </div>

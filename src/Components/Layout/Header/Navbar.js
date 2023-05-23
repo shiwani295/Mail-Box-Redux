@@ -1,9 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../Header/Navbar.css";
 import logo from "../../Asset/Image/logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthAction } from "../../Store/AuthSlice";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuth = useSelector((state) => state.Auth.isAuth);
+  const email = localStorage.getItem("email");
+  console.log(email);
+  const logoutHandler = async () => {
+    await dispatch(AuthAction.Logout());
+    navigate("/login");
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-dark headerNav">
       <Link className="navbar-brand text-white" to={"/"}>
@@ -34,33 +46,38 @@ const Navbar = () => {
               aria-label="Search"
             />
           </form>
-          <Link
-            className="btn btn-outline-dark text-white border-white"
-            type="submit"
-            to={"/login"}
-          >
-            Login
-          </Link>
-          <li className="nav-item dropdown">
-            <button
-              className="nav-link btn bg-white ml-3 mr-5"
-              href="#"
-              id="navbarDropdown"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
+          {!isAuth && (
+            <Link
+              className="btn btn-outline-dark text-white border-white"
+              type="submit"
+              to={"/login"}
             >
-              <i className="fa fa-user" aria-hidden="true"></i>
-            </button>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-              <Link className="dropdown-item" href="#">
-                username
-              </Link>
-              <Link className="dropdown-item" href="#">
-                Logout
-              </Link>
-            </div>
-          </li>
+              Login
+            </Link>
+          )}
+          {isAuth && (
+            <li className="nav-item dropdown">
+              <button
+                className="nav-link btn bg-white ml-3 mr-5"
+                href="#"
+                id="navbarDropdown"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <i className="fa fa-user" aria-hidden="true"></i>
+              </button>
+              <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                <Link className="dropdown-item" href="#">
+                  {email}
+                </Link>
+
+                <Link className="dropdown-item" onClick={logoutHandler}>
+                  Logout
+                </Link>
+              </div>
+            </li>
+          )}
         </ul>
       </div>
     </nav>
