@@ -8,7 +8,6 @@ const Maildashboard = () => {
   const [getData, setGetdata] = useState([]);
   const dispatch = useDispatch();
   const inboxlength = useSelector((state) => state.Mail.totalinboxmessage);
-
   const loginemail = localStorage.getItem("email");
   const LoginUserPlainEmail = loginemail.replace(/[^a-zA-Z0-9]/g, "");
 
@@ -79,6 +78,7 @@ const Maildashboard = () => {
             {/* END INBOX MENU */}
 
             {/* BEGIN INBOX CONTENY */}
+
             <div className="col-md-9 col-lg-9 col-sm-9">
               <div className="row">
                 {/* SEARCH START */}
@@ -110,15 +110,31 @@ const Maildashboard = () => {
                               </div>
                             </td>
 
-                            <td className="name">
-                              <Link>{items.subject}</Link>
+                            <td className="name ">
+                              <Link style={{ textDecoration: "none" }}>
+                                <span className="bg-dark text-white p-1 rounded">
+                                  from-{items.from}
+                                </span>
+                                &nbsp;
+                                <span className="text-dark">
+                                  {items.subject}
+                                </span>
+                              </Link>
                             </td>
-                            <td className="subject">
-                              <Link>{items.msgBody}</Link>
+                            <td className="subject ">
+                              <Link
+                                className="text-dark"
+                                style={{ textDecoration: "none" }}
+                              >
+                                {items.msgBody}
+                              </Link>
                             </td>
                             <td className="time">{items.date}</td>
                             <td>
-                              <Link>
+                              <Link
+                                className="text-dark"
+                                style={{ textDecoration: "none" }}
+                              >
                                 <i
                                   className="fa fa-trash"
                                   aria-hidden="true"
