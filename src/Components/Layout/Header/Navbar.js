@@ -10,7 +10,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const isAuth = useSelector((state) => state.Auth.isAuth);
   const email = localStorage.getItem("email");
-  console.log(email);
   const logoutHandler = async () => {
     await dispatch(AuthAction.Logout());
     navigate("/login");
@@ -19,7 +18,8 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-dark headerNav">
       <Link className="navbar-brand text-white" to={"/"}>
-        <img src={logo} alt="logo" className="w-25 h-25 d-block  " />
+        {/* <img src={logo} alt="logo" className="w-25 h-25 d-block  " /> */}
+        Mail Box
       </Link>
       <button
         className="navbar-toggler"
@@ -35,17 +35,21 @@ const Navbar = () => {
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
-          <li className="nav-item"></li>
+          {isAuth && (
+            <Link className="nav-item text-white" to={"/dashboard"}>
+              Dashboard
+            </Link>
+          )}
         </ul>
         <ul className="navbar-nav">
-          <form className="form-inline my-2 my-lg-0">
+          {/* <form className="form-inline my-2 my-lg-0">
             <input
               className="form-control mr-sm-2"
               type="search"
               placeholder="Search"
               aria-label="Search"
             />
-          </form>
+          </form> */}
           {!isAuth && (
             <Link
               className="btn btn-outline-dark text-white border-white"
