@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Signupform />} />
-        {/* <Route path="*" element={<Signupform />} /> */}
+
         <Route path="/dashboard" element={<MailBoard />} />
         <Route path="/dashboard/send" element={<MailBoard />} />
         <Route path="/dashboard/inbox" element={<MailBoard />} />
@@ -27,3 +27,4 @@ function App() {
   );
 }
 export default App;
+/* <Route path="*" element={<Signupform />} /> */
