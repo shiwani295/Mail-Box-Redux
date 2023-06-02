@@ -5,10 +5,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 // import { EditorState } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useDispatch } from "react-redux";
-import {
-  FromreciverDataAction,
-  ToSendDataAction,
-} from "../../Store/ModelMailSlice";
+import { ToSendDataAction } from "../../Store/ModelMailSlice";
 
 const Model = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -24,21 +21,26 @@ const Model = () => {
   const loginemail = localStorage.getItem("email");
   const LoginUserPlainEmail = loginemail.replace(/[^a-zA-Z0-9]/g, ""); // which use login by email// from user
   const toPlanEmail = recipientEmail.replace(/[^a-zA-Z0-9]/g, ""); //to i.e. which email address you have send the mail
+  // console.log(toPlanEmail);
+  // console.log(LoginUserPlainEmail);
   const curDT = new Date().toLocaleString();
 
   const MailBoxFormHandler = (event) => {
+    // console.log("HELLO TEST");
     event.preventDefault();
-    if (LoginUserPlainEmail.length > 0) {
+    if (toPlanEmail.length > 0) {
       fetch(
-        `https://mailbox-57936-default-rtdb.firebaseio.com/${toPlanEmail}/inbox.json`,
+        `https://mailbox-57936-default-rtdb.firebaseio.com/${toPlanEmail}/inbox.json`, // jispe send kr rhi hu
         {
           method: "POST",
           body: JSON.stringify({
-            from: loginemail,
+            id: Math.random().toString(),
             to: recipientEmail,
+            from: loginemail,
             subject: subject,
             msgBody: editorState.getCurrentContent().getPlainText(),
             date: curDT,
+            read: false,
           }),
           headers: {
             "Content-type": "application/json; charset=UTF-8",
@@ -46,25 +48,18 @@ const Model = () => {
         }
       ).then((res) => {
         if (res.ok) {
-          dispatch(
-            ToSendDataAction.ToSendData({
-              from: loginemail,
-              to: recipientEmail,
-              subject: subject,
-              msgBody: editorState.getCurrentContent().getPlainText(),
-              date: curDT,
-            })
-          );
           fetch(
-            `https://mailbox-57936-default-rtdb.firebaseio.com/${LoginUserPlainEmail}/sendBox.json`,
+            `https://mailbox-57936-default-rtdb.firebaseio.com/${LoginUserPlainEmail}/sendBox.json`, // jisse me login hu
             {
               method: "POST",
               body: JSON.stringify({
-                from: loginemail,
+                id: Math.random().toString(),
                 to: recipientEmail,
+                from: loginemail,
                 subject: subject,
                 msgBody: editorState.getCurrentContent().getPlainText(),
                 date: curDT,
+                read: false,
               }),
             }
           ).then((res) => {
@@ -83,6 +78,17 @@ const Model = () => {
           throw new Error("something went wrong");
         }
       });
+      dispatch(
+        ToSendDataAction.ToSendData({
+          id: Math.random().toString(),
+          from: loginemail,
+          to: recipientEmail,
+          subject: subject,
+          msgBody: editorState.getCurrentContent().getPlainText(),
+          date: curDT,
+          read: false,
+        })
+      );
     }
   };
 

@@ -3,7 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialModelSliceState = {
   sendData: [],
   reciverData: [],
+  ToReciverData: [],
   totalinboxmessage: 0,
+  read: "",
+  changeData: [],
 };
 
 const ModelMailSlice = createSlice({
@@ -11,24 +14,43 @@ const ModelMailSlice = createSlice({
   initialState: initialModelSliceState,
   reducers: {
     ToSendData: (state, action) => {
-      const newEmail = action.payload;
-      state.sendData.push({
-        id: Math.random().toString(),
-        from: newEmail.from,
-        to: newEmail.to,
-        subject: newEmail.subject,
-        content: newEmail.msgBody,
-        date: newEmail.date,
-      });
+      state.sendData = action.payload;
+      console.log(action.payload);
+      console.log(state.sendData);
+    },
+    ToReciverData: (state, action) => {
+      //Inbox data
+      state.ToReciverData = action.payload;
+      console.log(action.payload);
     },
     getData: (state, action) => {
+      //login user data (send data || sendbox)
       state.reciverData = action.payload;
+      console.log(action.payload);
       state.totalinboxmessage = state.reciverData.length;
-
-      console.log(state.reciverData);
+      // console.log(state.totalinboxmessage);
+    },
+    changeData: (state, action) => {
+      state.changeData = action.payload;
+      console.log(action.payload);
+    },
+    readMail(state, action) {
+      console.log(action.payload);
+      // action.payload.map((item) => {
+      //   console.log(item);
+      //   if (item.read === false) {
+      //     state.read = item.read;
+      //   }
+      //   if (item.read === true) {
+      //     state.read = item.read;
+      //   }
+      // });
     },
   },
 });
 export const ToSendDataAction = ModelMailSlice.actions;
 export const getDataAction = ModelMailSlice.actions;
+export const ToReciverDataAction = ModelMailSlice.actions;
+export const changeDataAction = ModelMailSlice.actions;
+export const readMailAction = ModelMailSlice.actions;
 export default ModelMailSlice.reducer;

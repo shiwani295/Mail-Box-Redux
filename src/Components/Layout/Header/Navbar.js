@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../Header/Navbar.css";
-import logo from "../../Asset/Image/logo.png";
+// import logo from "../../Asset/Image/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthAction } from "../../Store/AuthSlice";
 
